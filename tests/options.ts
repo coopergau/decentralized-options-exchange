@@ -36,7 +36,7 @@ describe("options", () => {
         new anchor.BN(expiryDateAndTime),
         isCall,
         new anchor.BN(optionPrice))
-      .accounts({ optionData: option1.publicKey, optionCounter: counter.publicKey, user: provider.wallet.publicKey })
+      .accounts({ optionData: option1.publicKey, optionCounter: counter.publicKey, seller: provider.wallet.publicKey })
       .signers([option1])
       .rpc();
 
@@ -44,6 +44,7 @@ describe("options", () => {
     console.log("Transaction signature:", tx);
     const optionAccount = await program.account.optionData.fetch(option1.publicKey);
     console.log("Option Data:", {
+      seller: optionAccount.seller,
       strikePrice: optionAccount.strikePrice.toNumber(),
       expiryDateAndTime: optionAccount.expiryDateAndTime.toNumber(),
       isCall: optionAccount.isCall,

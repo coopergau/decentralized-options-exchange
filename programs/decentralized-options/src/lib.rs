@@ -25,6 +25,7 @@ pub mod options {
 
         // Create new option
         let option_data = &mut ctx.accounts.option_data;
+        option_data.seller = ctx.accounts.seller.key();
         option_data.strike_price = strike_price;
         option_data.expiry_date_and_time = expiry_date_and_time;
         option_data.is_call = is_call;
@@ -50,14 +51,14 @@ pub struct Initialize<'info> {
 #[derive(Accounts)]
 pub struct ListOption<'info> {
     #[account(init, 
-        payer=user, 
+        payer=seller, 
         space=DISCRIMINATOR + OptionData::INIT_SPACE
     )]
     pub option_data: Account<'info, OptionData>,
     #[account(mut)]
     pub option_counter: Account<'info, OptionCounter>,
     #[account(mut)]
-    pub user: Signer<'info>,
+    pub seller: Signer<'info>,
     pub system_program: Program<'info, System>
 }
 
@@ -71,6 +72,8 @@ pub struct OptionCounter {
 #[derive(InitSpace)]
 pub struct OptionData {
     //pub asset_price_feed: Pubkey,
+    pub seller: Pubkey,
+    pub buyer: Option<Pubkey>,
     pub strike_price: u64,
     pub expiry_date_and_time: i64,
     pub is_call: bool,
